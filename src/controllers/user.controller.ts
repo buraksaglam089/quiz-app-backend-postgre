@@ -9,15 +9,21 @@ export const createUser = async (
   next: NextFunction
 ) => {
   console.log(prisma.user);
-  await prisma.user.create({
-    data: req.body,
-  });
+  const { username, email, password } = req.body;
 
+  await prisma.user.create({
+    data: {
+      username,
+      email,
+      password,
+    },
+  });
   res.status(201).json({
     status: "success",
     message: "An email with a verification code has been sent to your email",
   });
 };
+
 export const getUserById = async (
   req: Request,
   res: Response,
@@ -28,15 +34,18 @@ export const getUserById = async (
     where: {
       id: Number(id),
     },
-    include: {
-      todos: true,
-    },
   });
 
   if (!user) {
     return res.status(404).json({
       status: "fail",
       message: "User not found",
+    });
+  }
+  if (id === undefined) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Invalid id",
     });
   }
 
@@ -52,13 +61,82 @@ export const getAllUsers = async (
   next: NextFunction
 ) => {
   const users = await prisma.user.findMany({
-    include: {
-      todos: true,
+    where: {
+      id: {
+        gte: 1, // 'gte' 'greater than or equal to' (büyük veya eşit) anlamına gelir
+      },
     },
   });
 
   res.status(200).json({
     status: "success",
     data: users,
+  });
+};
+
+export const deleteUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      status: "fail",
+      message: "User not found",
+    });
+  }
+
+  await prisma.user.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  res.status(204).json({
+    status: "success",
+    message: "User deleted successfully",
+  });
+};
+
+export const updateUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      status: "fail",
+      message: "User not found",
+    });
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      ...req.body,
+    },
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: updatedUser,
   });
 };

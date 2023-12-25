@@ -1,0 +1,8 @@
+{
+    "accessToken": "kuyiz941db03b6a6757dc54fefea890e9f2f90aaca3a0249c45cb1dcd33b2d9f16dc99184274f6db4eccdb22fe1523d26cec804984cf3e7c8ce3bbd9a2e288b8dee6c",
+    "accessTokenExpiresIn": 30,
+    "refreshToken": "kuyizce13bc063bfb071d0d39382277f01aa60f7c6aa57c8b7298cecebbbd7fadb60f130ed1dc573f679e77b00ce210fa9d4c35e38e0b233456ed7e0d456d2fe31dc6",
+    "refreshTokenExpiresIn": 365,
+    "passwordResetTokenSecret": "kuyiz2e0f1ed3c927c626ee01b1a834dbb3e8c2280ef3b942a1da0d438944787c2373",
+    "passwordResetTokenExpiresIn": 15
+}

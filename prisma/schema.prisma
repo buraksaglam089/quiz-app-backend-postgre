@@ -1,37 +1,56 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id   Int    @id @default(autoincrement())
-  name String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  todos Todo[] // User ile Todo arasındaki ilişkiyi gösterir
-
-  @@map(name: "users")
+generator client {
+  provider = "prisma-client-js"
 }
 
-model Todo {
-  id          Int    @id @default(autoincrement())
-  title       String
-  description String
+enum QuizType {
+  no_timer
+  with_timer
+}
 
+//updated at ve deleted at leri ekle
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  quiz      Quiz[]
+  score     Int      @default(0)
+}
 
-  userId Int // User ile Todo arasındaki ilişkiyi kullanır
-  user   User @relation(fields: [userId], references: [id]) // User ile Todo arasındaki ilişkiyi gösterir
+model Quiz {
+  id           Int        @id @default(autoincrement())
+  title        String
+  createdAt    DateTime   @default(now())
+  questions    Question[]
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  duration     Int
+  thumbnailUrl String?
+  dueDate      DateTime?
+  quizType     QuizType   @default(no_timer)
+  quizTime     Int?
+}
 
-  @@map(name: "todos")
+model Question {
+  id       Int     @id @default(autoincrement())
+  text     String
+  quizId   Int
+  imageUrl String?
+  quiz     Quiz    @relation(fields: [quizId], references: [id])
+  options  Json
+  answer   Answer?
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  text       String
+  questionId Int      @unique
+  question   Question @relation(fields: [questionId], references: [id])
 }
