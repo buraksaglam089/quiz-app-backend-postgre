@@ -23,9 +23,13 @@ export const findUniqueUser = async (
 };
 
 export const signTokens = async (user: User) => {
+  const access_token = signJwt({ sub: user.id }, "accessToken", {
+    expiresIn: `${config.get<number>("accessTokenExpiresIn")}m`,
+  });
+
   const refresh_token = signJwt({ sub: user.id }, "refreshToken", {
     expiresIn: `${config.get<number>("refreshTokenExpiresIn")}d`,
   });
 
-  return { refresh_token };
+  return { refresh_token, access_token };
 };

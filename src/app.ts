@@ -1,16 +1,18 @@
 require("dotenv").config();
+
 import express, { Response } from "express";
-/* import validateEnv from './utils/validateEnv'; */
 import { PrismaClient } from "@prisma/client";
 import userRouter from "./routes/user.routes";
 import quizRouter from "./routes/quiz.routes";
-import authRouter from "./routes/auth.routes"; 
+import authRouter from "./routes/auth.routes";
+import { requireUser } from "./middleware/requireUser";
+import { deserializeUser } from "./middleware/deserializeUser";
 import cors from "cors";
-
-/* validateEnv(); */
 
 const prisma = new PrismaClient();
 const app = express();
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 async function bootstrap() {
   // 1.Body Parser
@@ -33,7 +35,9 @@ async function bootstrap() {
 
   // ROUTES
   app.use("/api/users", userRouter);
+
   app.use("/api/quiz", quizRouter);
+
   app.use("/api/auth", authRouter);
 
   const port = 3000;

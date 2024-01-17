@@ -8,7 +8,6 @@ export const createUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(prisma.user);
   const { username, email, password } = req.body;
 
   await prisma.user.create({
@@ -22,6 +21,24 @@ export const createUser = async (
     status: "success",
     message: "An email with a verification code has been sent to your email",
   });
+};
+export const getMeHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = res.locals.user;
+
+    res.status(200).status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (err: any) {
+    next(err);
+  }
 };
 
 export const getUserById = async (
