@@ -53,8 +53,6 @@ export const loginUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.body);
-
   const { username, password } = req.body;
 
   const user = await prisma.user.findUnique({
@@ -70,10 +68,7 @@ export const loginUser = async (
   const isCorrectPassword = await bcrypt.compare(password, user.password);
 
   if (!isCorrectPassword) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Incorrect password",
-    });
+    return next(new AppError(400, "Invalid password"));
   }
 
   const { access_token, refresh_token } = await signTokens(user);

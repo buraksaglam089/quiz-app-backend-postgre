@@ -17,7 +17,7 @@ router.get("/:id", getUserById);
 
 router.use(deserializeUser, requireUser);
 
-router.get("/me/me", getMeHandler);
+router.get("/me", getMeHandler);
 
 router.get("/get/all", getAllUsers);
 

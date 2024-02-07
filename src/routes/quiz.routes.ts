@@ -11,8 +11,12 @@ import {
   checkAnswers,
   deleteAnswerById,
 } from "../controllers/quiz.controller";
+import { deserializeUser } from "../middleware/deserializeUser";
+import { requireUser } from "../middleware/requireUser";
 
 const router = express.Router();
+
+router.use(deserializeUser, requireUser); // Deserialize user from the request
 
 // Quiz routes
 router.post("/quizzes", createQuiz); // Create a new quiz
