@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import express, { Response } from "express";
+import express, { NextFunction, Response, Request } from "express";
 import { PrismaClient } from "@prisma/client";
 import userRouter from "./routes/user.routes";
 import quizRouter from "./routes/quiz.routes";
@@ -8,6 +8,7 @@ import authRouter from "./routes/auth.routes";
 import { requireUser } from "./middleware/requireUser";
 import { deserializeUser } from "./middleware/deserializeUser";
 import cors from "cors";
+import AppError from "./utils/appError";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -38,7 +39,15 @@ async function bootstrap() {
 
   app.use("/api/quiz", quizRouter);
 
-  app.use("/api/auth", authRouter);
+  app.use((err: AppError, req: Request, res: Response, next: NextFunction) => {
+    err.status = err.status || "error";
+    err.statusCode = err.statusCode || 500;
+
+    res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
+    });
+  });
 
   const port = 3000;
   app.listen(port, () => {
